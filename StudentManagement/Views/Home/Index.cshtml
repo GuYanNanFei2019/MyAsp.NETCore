@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Students>
+
+@{
+	ViewBag.Title = "学生列表信息";
+}
+
+<table class="table table-primary table-hover text-center mt-3">
+	<thead class="thead-dark">
+		<tr>
+			<th>ID</th>
+			<th>姓名</th>
+			<th>年级</th>
+			<th>邮箱</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@item.ID
+				</td>
+				<td>
+					@item.Name
+				</td>
+				<td>
+					@Html.DisplayFor(c=>item.ClassName)
+				</td>
+				<td>
+					@item.Email
+				</td>
+				<td>
+					<a class="btn btn-info m-1" asp-controller="Home" asp-action="Detail" asp-route-id="@item.ID">查看详情</a>
+
+					<a class="btn btn-primary m-1" asp-controller="Home" asp-action="Edit" asp-route-id="@item.ID">编辑</a>
+
+					<a class="btn btn-danger" asp-controller="Home" asp-action="Delete" asp-route-id="@item.ID">删除</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

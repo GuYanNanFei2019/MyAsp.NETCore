@@ -1,0 +1,36 @@
+﻿@model Students;
+@{
+	ViewBag.Title = "删除学生";
+
+	var photo = "~/images/" + (Model.PhotoPath ?? "NoImage.png");
+}
+
+<form method="post" asp-controller="Home" asp-action="Delete" class="mt-3">
+
+	<input type="hidden" asp-for="@Model.ID" />
+
+	<input type="hidden" asp-for="@Model.PhotoPath" />
+
+	<div class="row justify-content-center mt-3">
+		<div class="col-sm-8">
+			<div class="card">
+				<div class="card-header">
+					<h2>@Model.Name</h2>
+				</div>
+
+				<div class="card-body text-center">
+					<img class="img-thumbnail img-fluid" src=@photo asp-append-version="true" />
+
+					<h4>ID：@Model.ID</h4>
+					<h4>年级 @Model.ClassName</h4>
+					<h4>邮箱：@Model.Email</h4>
+				</div>
+				<div class="card-footer text-center">
+					<a asp-controller="Home" asp-action="Index" class="btn btn-primary m-1">返回</a>
+
+					<button type="submit" class="btn btn-danger">删除</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>

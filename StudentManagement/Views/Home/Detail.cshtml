@@ -1,0 +1,29 @@
+﻿@model HomeDetailViewModel;
+
+@{
+	ViewBag.Title = "学生详情页";
+
+	var photo = "~/images/" + (Model.Students.PhotoPath??"NoImage.png");
+}
+<div class="row justify-content-center mt-3">
+	<div class="col-sm-8">
+		<div class="card">
+			<div class="card-header">
+				<h2>@Model.Students.Name</h2>
+			</div>
+
+			<div class="card-body text-center">
+				<img class="img-thumbnail img-fluid" src=@photo asp-append-version="true" />
+
+				<h4>ID：@Model.Students.ID</h4>
+				<h4>年级 @Html.DisplayFor(c=>Model.Students.ClassName)</h4>
+				<h4>邮箱：@Model.Students.Email</h4>
+			</div>
+			<div class="card-footer text-center">
+				<a asp-controller="Home" asp-action="Index" class="btn btn-primary m-1">返回</a>
+
+				<a asp-controller="Home" asp-action="Edit" asp-route-id="@Model.Students.ID" class="btn btn-warning m-1">编辑</a>
+			</div>
+		</div>
+	</div>
+</div>

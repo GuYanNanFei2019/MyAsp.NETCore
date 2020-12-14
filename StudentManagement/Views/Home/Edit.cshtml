@@ -1,0 +1,78 @@
+﻿@model StudentEditViewModel
+@{
+	ViewBag.Title="编辑学生";
+
+	var photo = "~/images/" + (Model.ExistingPhotoPath ?? "NoImage.png");
+}
+
+<h1>这里是编辑页面</h1>
+
+<form enctype="multipart/form-data" method="post" asp-controller="Home" asp-action="Edit" class="mt-3">
+	<div asp-validation-summary="All" class="text-danger"></div>
+
+	<input type="hidden" asp-for="id"/>
+
+	<input type="hidden" asp-for="ExistingPhotoPath"/>
+
+	<div class="form-group row">
+		<label asp-for="Name" class="col-sm-2 col-form-label"></label>
+		<div class="col-sm-10">
+			<input asp-for="Name" class="form-control" placeholder="请输入姓名" />
+			<span asp-validation-for="Name" class="text-danger"></span>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label asp-for="Email" class="col-sm-2 col-form-label"></label>
+		<div class="col-sm-10">
+			<input asp-for="Email" class="form-control" placeholder="请输入邮箱" />
+			<span asp-validation-for="Email" class="text-danger"></span>
+			<span class="text-danger">@ViewBag.EmailRepeat</span>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label asp-for="ClassName" class="col-sm-2 col-form-label"></label>
+		<div class="col-sm-10">
+			<select asp-for="ClassName" asp-items="Html.GetEnumSelectList<ClassNameEnum>()" class="custom-select mr-sm-2">
+				<option value="">请选择</option>
+			</select>
+			<span asp-validation-for="ClassName" class="text-danger"></span>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label asp-for="PhotoPath" class="col-sm-2 col-form-label"></label>
+		<div class="col-sm-10">
+			<div class="custom-file">
+				<input asp-for="PhotoPath" multiple class="form-control custom-file-input" />
+				<label class="custom-file-label">请选择图片</label>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group row col-sm-4 offset-4">
+		<img src="@photo" class="img-thumbnail" asp-append-version="true"/>
+	</div>
+
+	<div class="form-group row">
+		<div class="col-sm-10">
+			<button type="submit" class="btn btn-warning m-1">更新</button>
+			<a type="button" class="btn btn-primary" asp-controller="Home" asp-action="Index">取消</a>
+		</div>
+	</div>
+
+	<script>
+		$(document).ready(function () {
+			$('.custom-file-input').change(function () {
+				var fileLable = $(this).next('.custom-file-label');
+				var files = $(this)[0].files;
+				if (files.length > 1) {
+					fileLable.html("您已选择了：" + files.length + "张图片");
+				} else if (files.length == 1) {
+					fileLable.html(files[0].name);
+				}
+			});
+		});
+	</script>
+</form>
