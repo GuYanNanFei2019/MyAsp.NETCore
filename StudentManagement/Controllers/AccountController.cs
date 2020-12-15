@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StudentManagement.ViewModels.IdentityViewModel;
 using System;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Controllers
 {
+	[AllowAnonymous]
 	public class AccountController : Controller
 	{
 		private readonly UserManager<IdentityUser> _userManager;
