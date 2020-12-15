@@ -21,5 +21,8 @@ namespace StudentManagement.ViewModels.IdentityViewModel
 
 		[Display(Name ="记住我")]
 		public bool RememberMe { get; set; }
+
+
+		public string ReturnUrl { get; set; }
 	}
 }
