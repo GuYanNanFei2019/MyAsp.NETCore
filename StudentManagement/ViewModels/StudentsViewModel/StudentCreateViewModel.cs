@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
 using StudentManagement_DataBase.ModelExtensions;
 using System;
 using System.Collections.Generic;
@@ -24,6 +26,7 @@ namespace StudentManagement.ViewModels.StudentsViewModel
 		[Display(Name = "邮箱")]
 		[EmailAddress(ErrorMessage = "邮箱地址非法")]
 		[DataType(DataType.EmailAddress)]
+		[Remote(action: "CheckEmailUnique", controller: "Home")]
 		public string Email { get; set; }
 
 		[Display(Name = "头像")]
