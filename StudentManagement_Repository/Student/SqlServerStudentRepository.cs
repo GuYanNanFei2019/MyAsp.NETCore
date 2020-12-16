@@ -20,36 +20,36 @@ namespace StudentManagement_Repository.Student
 			_logger = logger;
 		}
 
-		public Students AddStudent(Students students)
+		public async Task<Students> AddStudent(Students students)
 		{
-			_dbcontext.Add(students);
-			_dbcontext.SaveChanges();
+			await _dbcontext.AddAsync(students);
+			await _dbcontext.SaveChangesAsync();
 
 			return students;
 		}
 
-		public Students DeleteStudent(int id)
+		public async Task<Students> DeleteStudent(int id)
 		{
-			if (_dbcontext.Students.Find(id) != null)
+			if (await _dbcontext.Students.FindAsync(id) != null)
 			{
 				_dbcontext.Students.Remove(_dbcontext.Students.Find(id));
-				_dbcontext.SaveChanges();
+				await _dbcontext.SaveChangesAsync();
 			}
 
-			return _dbcontext.Students.Find(id);
+			return await _dbcontext.Students.FindAsync(id);
 		}
 
-		public IEnumerable<Students> GetAllStudents() => _dbcontext.Students.ToList();
+		public async Task<IEnumerable<Students>> GetAllStudents() => await _dbcontext.Students.ToListAsync();
 
-		public Students GetStudent(int id) => _dbcontext.Students.Find(id);
+		public async Task<Students> GetStudent(int id) => await _dbcontext.Students.FindAsync(id);
 
-		public Students GetStudentsByEmail(string email) => _dbcontext.Students.Where(s => s.Email.Equals(email)).FirstOrDefault();
+		public async Task<Students> GetStudentsByEmail(string email) => await _dbcontext.Students.Where(s => s.Email.Equals(email)).FirstOrDefaultAsync();
 
-		public Students UpdateStudent(Students students)
+		public async Task<Students> UpdateStudent(Students students)
 		{
 			_dbcontext.Students.Attach(students).State = EntityState.Modified;
 
-			_dbcontext.SaveChanges();
+			await _dbcontext.SaveChangesAsync();
 
 			return students;
 		}
@@ -59,11 +59,11 @@ namespace StudentManagement_Repository.Student
 		/// </summary>
 		/// <param name="email"></param>
 		/// <returns></returns>
-		public bool CheckEmailUnique(string email) 
+		public async Task<bool> CheckEmailUnique(string email) 
 		{
 			if (!string.IsNullOrWhiteSpace(email))
 			{
-				if (GetStudentsByEmail(email)!=null)
+				if (await GetStudentsByEmail(email)!=null)
 				{
 					return false;
 				}
