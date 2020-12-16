@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using StudentManagement.ViewModels.StudentsViewModel;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace StudentManagement.Controllers
 {
@@ -37,9 +38,9 @@ namespace StudentManagement.Controllers
 		[Route("~/")]
 		[Route("~/Home")]
 		[HttpGet]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
-			return View(_studentRepository.GetAllStudents());
+			return View(await _studentRepository.GetAllStudents());
 		}
 
 		/// <summary>
@@ -49,9 +50,9 @@ namespace StudentManagement.Controllers
 		/// <returns></returns>
 		[Route("{id?}")]
 		[HttpGet]
-		public IActionResult Detail(int id)
+		public async Task<IActionResult> Detail(int id)
 		{
-			Students students = _studentRepository.GetStudent(id);
+			Students students =await _studentRepository.GetStudent(id);
 
 			if (students == null)
 			{
@@ -62,7 +63,7 @@ namespace StudentManagement.Controllers
 
 			HomeDetailViewModel homeDetailViewModel = new HomeDetailViewModel
 			{
-				Students = _studentRepository.GetStudent(id),
+				Students =await _studentRepository.GetStudent(id),
 				PageTitle = "学生详情信息"
 			};
 
@@ -85,18 +86,10 @@ namespace StudentManagement.Controllers
 		/// <param name="viewModel"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public IActionResult Create(StudentCreateViewModel viewModel)
+		public async Task<IActionResult> Create(StudentCreateViewModel viewModel)
 		{
 			if (ModelState.IsValid)
 			{
-				bool emailres = _studentRepository.CheckEmailUnique(viewModel.Email);
-
-				if (!emailres)
-				{
-					ViewBag.EmailRepeat = "对不起，邮箱不得重复，请更换其他邮箱";
-					return View();
-				}
-
 				string uniqueName = null;
 				if (viewModel.PhotoPath != null && viewModel.PhotoPath.Count > 0)
 				{
@@ -111,7 +104,7 @@ namespace StudentManagement.Controllers
 					PhotoPath = uniqueName
 				};
 
-				_studentRepository.AddStudent(students);
+				await _studentRepository.AddStudent(students);
 
 				return RedirectToAction(actionName: "Detail", routeValues: new { id = students.ID });
 			}
@@ -126,9 +119,9 @@ namespace StudentManagement.Controllers
 		/// <param name="id"></param>
 		/// <returns></returns>
 		[HttpGet]
-		public IActionResult Edit(int id)
+		public async Task<IActionResult> Edit(int id)
 		{
-			Students students = _studentRepository.GetStudent(id);
+			Students students =await _studentRepository.GetStudent(id);
 
 			if (students != null)
 			{
@@ -156,19 +149,11 @@ namespace StudentManagement.Controllers
 		/// <param name="viewModel"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public IActionResult Edit(StudentEditViewModel viewModel)
+		public async Task<IActionResult> Edit(StudentEditViewModel viewModel)
 		{
 			if (ModelState.IsValid)
 			{
-				bool emailres = _studentRepository.CheckEmailUnique(viewModel.Email);
-
-				if (!emailres)
-				{
-					ViewBag.EmailRepeat = "对不起，邮箱不得重复，请更换其他邮箱";
-					return View(viewModel);
-				}
-
-				Students students = _studentRepository.GetStudent(viewModel.id);
+				Students students =await _studentRepository.GetStudent(viewModel.id);
 				students.Name = viewModel.Name;
 				students.Email = viewModel.Email;
 				students.ClassName = viewModel.ClassName;
@@ -190,7 +175,7 @@ namespace StudentManagement.Controllers
 					students.PhotoPath = uniqueName;
 				}
 
-				_studentRepository.UpdateStudent(students);
+				await _studentRepository.UpdateStudent(students);
 
 				return RedirectToAction(actionName: "Detail",
 							routeValues: new { id = students.ID });
@@ -204,9 +189,9 @@ namespace StudentManagement.Controllers
 		/// <param name="id"></param>
 		/// <returns></returns>
 		[HttpGet]
-		public IActionResult Delete(int id)
+		public async Task<IActionResult> Delete(int id)
 		{
-			Students students = _studentRepository.GetStudent(id);
+			Students students = await _studentRepository.GetStudent(id);
 
 			if (students == null)
 			{
@@ -227,7 +212,7 @@ namespace StudentManagement.Controllers
 		/// <param name="students"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public IActionResult Delete(Students students)
+		public async Task<IActionResult> Delete(Students students)
 		{
 			if (students.PhotoPath != null)
 			{
@@ -238,11 +223,29 @@ namespace StudentManagement.Controllers
 				System.IO.File.Delete(filePath);
 			}
 
-			_studentRepository.DeleteStudent(students.ID);
+			await _studentRepository.DeleteStudent(students.ID);
 
 			return RedirectToAction("Index");
 		}
 
+		/// <summary>
+		/// 检查新增学生和编辑学生信息时邮箱唯一性
+		/// </summary>
+		/// <param name="email"></param>
+		/// <returns></returns>
+		[AcceptVerbs("Get","Post")]
+		public async Task<IActionResult> CheckEmailUnique(string email) 
+		{
+			var res = await _studentRepository.CheckEmailUnique(email);
+			if (res)
+			{
+				return Json(true);
+			}
+			else
+			{
+				return Json($"对不起，邮箱{email}已被使用，请更换邮箱");
+			}
+		}
 
 		/// <summary>
 		/// 将图片保存到指定路径并返回文件名
