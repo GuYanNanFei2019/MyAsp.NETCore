@@ -115,5 +115,26 @@ namespace StudentManagement.Controllers
 
 			return View(model);
 		}
+
+		/// <summary>
+		/// 检测用户注册时邮箱是否重复
+		/// </summary>
+		/// <param name="email"></param>
+		/// <returns></returns>
+		[AcceptVerbs("Get","Post")]
+		[AllowAnonymous]
+		public async Task<IActionResult> IsEmailInUse(string email) 
+		{
+			var user = await _userManager.FindByEmailAsync(email);
+
+			if (user==null)
+			{
+				return Json(true);
+			}
+			else
+			{
+				return Json($"对不起，邮箱{email}已被注册，请更换邮箱");
+			}
+		}
 	}
 }
