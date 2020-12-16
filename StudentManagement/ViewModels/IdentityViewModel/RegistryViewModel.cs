@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace StudentManagement.ViewModels.IdentityViewModel
 		[Display(Name ="邮箱")]
 		[EmailAddress(ErrorMessage ="邮箱地址不合法")]
 		[DataType(DataType.EmailAddress)]
+		[Remote(action: "IsEmailInUse", controller: "Account")]
 		public string Email { get; set; }
 
 		[Required(ErrorMessage ="密码不得为空")]
