@@ -28,5 +28,9 @@ namespace StudentManagement.ViewModels.IdentityViewModel
 		[Display(Name ="确认密码")]
 		[Compare(otherProperty:"PassWord",ErrorMessage ="两次密码不一致")]
 		public string ConfirmPassWord { get; set; }
+
+		[Display(Name ="城市")]
+		[DataType(DataType.Text)]
+		public string City { get; set; }
 	}
 }
