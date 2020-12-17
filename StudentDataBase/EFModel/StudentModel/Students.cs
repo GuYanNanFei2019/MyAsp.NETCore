@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace StudentManagement_DataBase.EFModel
+namespace StudentManagement_DataBase.EFModel.StudentModel
 {
 	public class Students
 	{
