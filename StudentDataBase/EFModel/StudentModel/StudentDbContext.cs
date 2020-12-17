@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using StudentManagement_DataBase.EFModel.IdentityModel;
 using StudentManagement_DataBase.ModelExtensions;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace StudentManagement_DataBase.EFModel.StudentModel
 {
-	public class StudentDbContext : IdentityDbContext
+	public class StudentDbContext : IdentityDbContext<ApplicationUser>
 	{
 		public StudentDbContext(DbContextOptions<StudentDbContext> options) : base(options)
 		{
