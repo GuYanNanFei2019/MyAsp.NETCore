@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using StudentManagement_DataBase.EFModel;
+using StudentManagement_DataBase.EFModel.StudentModel;
 using StudentManagement_Repository.Student;
 using StudentManagement_Tools.MiddleWare;
 

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using StudentManagement_DataBase.EFModel;
+using StudentManagement_DataBase.EFModel.StudentModel;
 
 namespace StudentManagement_DataBase.Migrations
 {

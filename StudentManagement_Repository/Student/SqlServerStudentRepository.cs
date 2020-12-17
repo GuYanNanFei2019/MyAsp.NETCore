@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-using StudentManagement_DataBase.EFModel;
+using StudentManagement_DataBase.EFModel.StudentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

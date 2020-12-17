@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using StudentManagement_DataBase.EFModel;
+using StudentManagement_DataBase.EFModel.StudentModel;
 using StudentManagement_Repository.Student;
 using System;
 using System.IO;
