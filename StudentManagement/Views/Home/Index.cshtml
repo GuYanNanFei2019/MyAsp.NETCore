@@ -31,11 +31,11 @@
 					@item.Email
 				</td>
 				<td>
-					<a class="btn btn-info m-1" asp-controller="Home" asp-action="Detail" asp-route-id="@item.ID">查看详情</a>
+					<a class="btn btn-outline-info m-1" asp-controller="Home" asp-action="Detail" asp-route-id="@item.ID">查看详情</a>
 
-					<a class="btn btn-primary m-1" asp-controller="Home" asp-action="Edit" asp-route-id="@item.ID">编辑</a>
+					<a class="btn btn-outline-primary m-1" asp-controller="Home" asp-action="Edit" asp-route-id="@item.ID">编辑</a>
 
-					<a class="btn btn-danger" asp-controller="Home" asp-action="Delete" asp-route-id="@item.ID">删除</a>
+					<a class="btn btn-outline-danger" asp-controller="Home" asp-action="Delete" asp-route-id="@item.ID">删除</a>
 				</td>
 			</tr>
 		}
