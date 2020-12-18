@@ -1,0 +1,54 @@
+﻿@model EditRoleViewModel;
+@{
+	ViewBag.Title = "编辑角色";
+}
+
+<div class="text-danger" asp-validation-summary="All"></div>
+
+<form method="post" asp-controller="Admin" asp-action="EditRole">
+	<div class="form-group row">
+		<label asp-for="Id" class="col-sm-2 col-form-label"></label>
+		<div class="col-sm-10">
+			<input asp-for="Id" class="form-control" disabled />
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label asp-for="RoleName" class="col-sm-2 col-form-label"></label>
+		<div class="col-sm-10">
+			<input asp-for="RoleName" class="form-control" placeholder="请输入角色名称" />
+		</div>
+		<span asp-validation-for="RoleName" class="text-danger"></span>
+	</div>
+
+	<div class="form-group row">
+		<div class="col-sm-10">
+			<button type="submit" class="btn btn-outline-success m-1">更新</button>
+			<a asp-controller="Admin" asp-action="ListRoles" class="btn btn-outline-primary">取消</a>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-header">
+			<h3>该角色中的用户</h3>
+		</div>
+		<div class="card-body">
+			@if (Model.Users.Any())
+			{
+				foreach (var item in Model.Users)
+				{
+					<h5 class="card-title">@item</h5>
+				}
+			}
+			else
+			{
+				<h5 class="card-title">该角色 @Model.RoleName 中没有用户</h5>
+			}
+		</div>
+
+		<div class="card-footer">
+			<a class="btn btn-outline-primary" asp-controller="Admin" asp-action="">新增用户</a>
+			<a class="btn btn-outline-danger" asp-controller="Admin" asp-action="">删除用户</a>
+		</div>
+	</div>
+</form>
