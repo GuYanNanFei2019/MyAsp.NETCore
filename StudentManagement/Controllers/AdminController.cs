@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.Extensions.Logging;
 using StudentManagement.ViewModels.IdentityViewModel;
-
+using StudentManagement_DataBase.EFModel.IdentityModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +13,17 @@ namespace StudentManagement.Controllers
 	public class AdminController : Controller
 	{
 		private readonly RoleManager<IdentityRole> _roleManager;
+		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly ILogger _logger; 
 
-		public AdminController(RoleManager<IdentityRole> roleManager) => _roleManager = roleManager;
+		public AdminController(RoleManager<IdentityRole> roleManager,ILogger<AdminController> logger,UserManager<ApplicationUser> userManager)
+		{
+			_roleManager = roleManager;
+			_userManager = userManager;
+
+			_logger = logger;
+			_logger.LogInformation("NLOG注入Admin控制器");
+		}
 
 		[HttpGet]
 		public IActionResult CreateRole()
@@ -35,7 +44,7 @@ namespace StudentManagement.Controllers
 				var res = await _roleManager.CreateAsync(role);
 				if (res.Succeeded)
 				{
-					return RedirectToAction("Index", "Home");
+					return RedirectToAction("ListRoles");
 				}
 
 				foreach (var item in res.Errors)
@@ -45,6 +54,77 @@ namespace StudentManagement.Controllers
 			}
 
 			return View(viewModel);
+		}
+
+		[HttpGet]
+		public IActionResult ListRoles() 
+		{
+			var roles = _roleManager.Roles;
+			return View(roles);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> EditRole(string id)
+		{
+			var role = await _roleManager.FindByIdAsync(id);
+
+			if (role==null)
+			{
+				ViewBag.ErrorMessage = $"ID为{id}的角色不存在，请重试";
+
+				_logger.LogError($"Admin控制器中EditRole方法ID为{id}的角色不存在");
+
+				return View("~/Views/Error/RouteNotFound.cshtml");
+			}
+
+			var model = new EditRoleViewModel
+			{
+				Id=role.Id,
+				RoleName=role.Name
+			};
+
+			foreach (var item in _userManager.Users)
+			{
+				if (await _userManager.IsInRoleAsync(item, role.Name))
+				{
+					model.Users.Add(item.UserName);
+				}
+			}
+
+			return View(model);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> EditRole(EditRoleViewModel model) 
+		{
+			var role = await _roleManager.FindByIdAsync(model.Id);
+
+			if (role == null)
+			{
+				ViewBag.ErrorMessage = $"ID为{model.Id}的角色不存在，请重试";
+
+				_logger.LogError($"Admin控制器中EditRole方法ID为{model.Id}的角色不存在");
+
+				return View("~/Views/Error/RouteNotFound.cshtml");
+			}
+			else
+			{
+				role.Name = model.RoleName;
+
+				var res = await _roleManager.UpdateAsync(role);
+
+				if (res.Succeeded)
+				{
+					return RedirectToAction("ListRoles");
+				}
+
+				foreach (var item in res.Errors)
+				{
+					ModelState.AddModelError("", item.Description);
+				}
+
+				return View(model);
+			}
 		}
 	}
 }
