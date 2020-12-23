@@ -47,8 +47,7 @@
 		</div>
 
 		<div class="card-footer">
-			<a class="btn btn-outline-primary" asp-controller="Admin" asp-action="">新增用户</a>
-			<a class="btn btn-outline-danger" asp-controller="Admin" asp-action="">删除用户</a>
+			<a class="btn btn-outline-primary" asp-controller="Admin" asp-action="EditUserInRole" asp-route-roleId="@Model.Id">从角色中添加或删除用户</a>
 		</div>
 	</div>
 </form>
