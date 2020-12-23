@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
 using StudentManagement.ViewModels.IdentityViewModel;
-
 using StudentManagement_DataBase.EFModel.IdentityModel;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Controllers
 {
+	[Authorize(Roles ="Admin")]
 	public class AdminController : Controller
 	{
 		private readonly RoleManager<IdentityRole> _roleManager;
@@ -27,6 +26,8 @@ namespace StudentManagement.Controllers
 			_logger = logger;
 			_logger.LogInformation("NLOG注入Admin控制器");
 		}
+
+		#region 角色管理
 
 		[HttpGet]
 		public IActionResult CreateRole()
@@ -217,5 +218,15 @@ namespace StudentManagement.Controllers
 
 			return RedirectToAction("EditRole", new { id = role.Id });
 		}
+		#endregion
+
+		#region 用户管理
+		[HttpGet]
+		public IActionResult ListUsers() 
+		{
+			var users = _userManager.Users;
+			return View(users);
+		}
+		#endregion
 	}
 }
