@@ -67,6 +67,18 @@
 					<li class="nav-item">
 						<a asp-controller="Home" asp-action="Create" class="nav-link m-1">新增学生</a>
 					</li>
+
+					@if (signInmanager.IsSignedIn(User) && User.IsInRole("Admin"))
+					{
+						<li class="nav-item dropdown m-md-auto">
+							<a href="#" class="nav-link dropdown-toggle" id="navbardropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">管理</a>
+
+							<div class="dropdown-menu" aria-labelledby="navbardropdown">
+								<a asp-controller="Admin" asp-action="ListRoles" class="dropdown-item">角色管理</a>
+								<a asp-controller="Admin" asp-action="ListUsers" class="dropdown-item">用户管理</a>
+							</div>
+						</li>
+					}
 				</ul>
 
 				<ul class="navbar-nav ml-auto">
