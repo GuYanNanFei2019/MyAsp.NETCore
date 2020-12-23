@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace StudentManagement.Controllers
 {
 	[Route("[controller]/[action]")]
+	[Authorize(Roles = "Admin,Custom")]
 	public class HomeController : Controller
 	{
 		private readonly IStudentRepository _studentRepository;
@@ -30,6 +31,8 @@ namespace StudentManagement.Controllers
 			_logger.LogDebug("NLog注入Home控制器");
 		}
 
+		#region 学生管理
+
 		/// <summary>
 		/// 学生列表
 		/// </summary>
@@ -38,6 +41,7 @@ namespace StudentManagement.Controllers
 		[Route("~/")]
 		[Route("~/Home")]
 		[HttpGet]
+		[AllowAnonymous]
 		public async Task<IActionResult> Index()
 		{
 			return View(await _studentRepository.GetAllStudents());
@@ -75,6 +79,7 @@ namespace StudentManagement.Controllers
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet]
+		[Authorize(Roles ="Admin")]
 		public IActionResult Create()
 		{
 			return View();
@@ -86,6 +91,7 @@ namespace StudentManagement.Controllers
 		/// <param name="viewModel"></param>
 		/// <returns></returns>
 		[HttpPost]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Create(StudentCreateViewModel viewModel)
 		{
 			if (ModelState.IsValid)
@@ -119,6 +125,7 @@ namespace StudentManagement.Controllers
 		/// <param name="id"></param>
 		/// <returns></returns>
 		[HttpGet]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Edit(int id)
 		{
 			Students students =await _studentRepository.GetStudent(id);
@@ -149,6 +156,7 @@ namespace StudentManagement.Controllers
 		/// <param name="viewModel"></param>
 		/// <returns></returns>
 		[HttpPost]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Edit(StudentEditViewModel viewModel)
 		{
 			if (ModelState.IsValid)
@@ -189,6 +197,7 @@ namespace StudentManagement.Controllers
 		/// <param name="id"></param>
 		/// <returns></returns>
 		[HttpGet]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Delete(int id)
 		{
 			Students students = await _studentRepository.GetStudent(id);
@@ -212,6 +221,7 @@ namespace StudentManagement.Controllers
 		/// <param name="students"></param>
 		/// <returns></returns>
 		[HttpPost]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Delete(Students students)
 		{
 			if (students.PhotoPath != null)
@@ -227,6 +237,8 @@ namespace StudentManagement.Controllers
 
 			return RedirectToAction("Index");
 		}
+
+		#endregion
 
 		/// <summary>
 		/// 检查新增学生和编辑学生信息时邮箱唯一性
