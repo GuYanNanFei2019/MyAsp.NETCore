@@ -1,0 +1,36 @@
+﻿@model IEnumerable<ApplicationUser>
+@{
+	ViewBag.Title = "用户列表";
+}
+
+
+@if (Model.Any())
+{
+	<a asp-controller="Account" asp-action="Register" class="btn btn-outline-info mb-3 mt-2">创建用户</a>
+
+	foreach (var item in Model)
+	{
+		<div class="card mb-3">
+			<div class="card-header">用户ID：@item.Id</div>
+			<div class="card-body">
+				<h5 class="card-title">用户名：@item.UserName</h5>
+			</div>
+			<div class="card-footer">
+				<a asp-action="DeleteUser" asp-controller="Admin" class="btn btn-outline-danger">删除</a>
+				<a asp-action="EditUser" asp-controller="Admin" class="btn btn-outline-warning">编辑</a>
+			</div>
+		</div>
+	}
+}
+else
+{
+	<div class="card">
+		<div class="card-header">
+			尚未创建用户
+		</div>
+		<div class="card-body">
+			<h5>点击下方创建用户</h5>
+			<a asp-controller="Account" asp-action="Register" class="btn btn-outline-info mb-3 mt-2">创建用户</a>
+		</div>
+	</div>
+}
