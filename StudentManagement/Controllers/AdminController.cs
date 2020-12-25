@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+
 using StudentManagement.ViewModels.IdentityViewModel;
+
 using StudentManagement_DataBase.EFModel.IdentityModel;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Controllers
 {
-	[Authorize(Roles ="Admin")]
+	[Authorize(Roles = "Admin")]
 	public class AdminController : Controller
 	{
 		private readonly RoleManager<IdentityRole> _roleManager;
@@ -205,7 +208,7 @@ namespace StudentManagement.Controllers
 
 				if (res.Succeeded)
 				{
-					if (i<(model.Count-1))
+					if (i < (model.Count - 1))
 					{
 						continue;
 					}
@@ -222,10 +225,73 @@ namespace StudentManagement.Controllers
 
 		#region 用户管理
 		[HttpGet]
-		public IActionResult ListUsers() 
+		public IActionResult ListUsers()
 		{
 			var users = _userManager.Users;
 			return View(users);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> EditUser(string id)
+		{
+			var user = await _userManager.FindByIdAsync(id);
+
+			if (user == null)
+			{
+				ViewBag.ErrorMessage = $"ID为{id}的用户不存在，请重试";
+				_logger.LogError($"Admin控制器中EditUser方法ID为{id}的用户不存在");
+
+				return View("~/Views/Error/RouteNotFound.cshtml");
+			}
+
+			var userClaims = await _userManager.GetClaimsAsync(user);
+
+			var userRoles = await _userManager.GetRolesAsync(user);
+
+			var model = new EditUserViewModel
+			{
+				ID = user.Id,
+				Email = user.Email,
+				UserName = user.UserName,
+				City = user.City,
+				Claims = userClaims.Select(c => c.Value).ToList(),
+				Roles = userRoles
+			};
+			return View(model);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> EditUser(EditUserViewModel model)
+		{
+			var user = await _userManager.FindByIdAsync(model.ID);
+
+			if (user == null)
+			{
+				ViewBag.ErrorMessage = $"ID为{model.ID}的用户不存在，请重试";
+				_logger.LogError($"Admin控制器中EditUser方法ID为{model.ID}的用户不存在");
+
+				return View("~/Views/Error/RouteNotFound.cshtml");
+			}
+
+			user.Email = model.Email;
+			user.UserName = model.UserName;
+			user.City = model.City;
+
+			var res = await _userManager.UpdateAsync(user);
+
+			if (res.Succeeded)
+			{
+				return RedirectToAction("ListUsers");
+			}
+			else
+			{
+				foreach (var item in res.Errors)
+				{
+					ModelState.AddModelError("", item.Description);
+				}
+
+				return View(model);
+			}
 		}
 		#endregion
 	}
