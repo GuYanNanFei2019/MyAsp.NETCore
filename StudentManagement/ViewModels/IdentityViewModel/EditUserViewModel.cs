@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using StudentManagement_Tools.CustomUtil;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -25,6 +27,8 @@ namespace StudentManagement.ViewModels.IdentityViewModel
 		[EmailAddress(ErrorMessage ="邮箱地址不合法")]
 		[DataType(DataType.EmailAddress)]
 		[Display(Name ="邮箱")]
+		[Remote(action: "IsEmailInUse", controller: "Account")]
+		[ValidEmailDomain(allowdomain: "edu.com", ErrorMessage = "注册邮箱必须以edu.com为后缀")]
 		public string Email { get; set; }
 
 		[Display(Name ="角色")]
