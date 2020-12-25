@@ -32,12 +32,21 @@ namespace StudentManagement.Controllers
 
 		#region 角色管理
 
+		/// <summary>
+		/// 创建角色(视图)
+		/// </summary>
+		/// <returns></returns>
 		[HttpGet]
 		public IActionResult CreateRole()
 		{
 			return View();
 		}
 
+		/// <summary>
+		/// 创建角色
+		/// </summary>
+		/// <param name="viewModel"></param>
+		/// <returns></returns>
 		[HttpPost]
 		public async Task<IActionResult> CreateRole(CreateRoleViewModel viewModel)
 		{
@@ -63,6 +72,10 @@ namespace StudentManagement.Controllers
 			return View(viewModel);
 		}
 
+		/// <summary>
+		/// 角色列表
+		/// </summary>
+		/// <returns></returns>
 		[HttpGet]
 		public IActionResult ListRoles()
 		{
@@ -70,6 +83,11 @@ namespace StudentManagement.Controllers
 			return View(roles);
 		}
 
+		/// <summary>
+		/// 编辑角色(视图)
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
 		[HttpGet]
 		public async Task<IActionResult> EditRole(string id)
 		{
@@ -101,6 +119,11 @@ namespace StudentManagement.Controllers
 			return View(model);
 		}
 
+		/// <summary>
+		/// 编辑角色
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
 		[HttpPost]
 		public async Task<IActionResult> EditRole(EditRoleViewModel model)
 		{
@@ -134,6 +157,11 @@ namespace StudentManagement.Controllers
 			}
 		}
 
+		/// <summary>
+		/// 编辑角色中的用户(视图)
+		/// </summary>
+		/// <param name="roleId"></param>
+		/// <returns></returns>
 		[HttpGet]
 		public async Task<IActionResult> EditUserInRole(string roleId)
 		{
@@ -168,6 +196,12 @@ namespace StudentManagement.Controllers
 			return View(model);
 		}
 
+		/// <summary>
+		/// 编辑角色中的用户
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="roleId"></param>
+		/// <returns></returns>
 		[HttpPost]
 		public async Task<IActionResult> EditUserInRole(List<UserRoleViewModel> model, string roleId)
 		{
@@ -224,6 +258,10 @@ namespace StudentManagement.Controllers
 		#endregion
 
 		#region 用户管理
+		/// <summary>
+		/// 用户列表
+		/// </summary>
+		/// <returns></returns>
 		[HttpGet]
 		public IActionResult ListUsers()
 		{
@@ -231,6 +269,11 @@ namespace StudentManagement.Controllers
 			return View(users);
 		}
 
+		/// <summary>
+		/// 编辑用户(视图)
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
 		[HttpGet]
 		public async Task<IActionResult> EditUser(string id)
 		{
@@ -260,38 +303,77 @@ namespace StudentManagement.Controllers
 			return View(model);
 		}
 
+		/// <summary>
+		/// 编辑用户
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
 		[HttpPost]
 		public async Task<IActionResult> EditUser(EditUserViewModel model)
 		{
-			var user = await _userManager.FindByIdAsync(model.ID);
+			if (ModelState.IsValid)
+			{
+				var user = await _userManager.FindByIdAsync(model.ID);
+
+				if (user == null)
+				{
+					ViewBag.ErrorMessage = $"ID为{model.ID}的用户不存在，请重试";
+					_logger.LogError($"Admin控制器中EditUser方法ID为{model.ID}的用户不存在");
+
+					return View("~/Views/Error/RouteNotFound.cshtml");
+				}
+
+				user.Email = model.Email;
+				user.UserName = model.UserName;
+				user.City = model.City;
+
+				var res = await _userManager.UpdateAsync(user);
+
+				if (res.Succeeded)
+				{
+					return RedirectToAction("ListUsers");
+				}
+
+				foreach (var item in res.Errors)
+				{
+					ModelState.AddModelError("", item.Description);
+				}
+			}
+
+			return View(model);
+		}
+
+		/// <summary>
+		/// 删除用户
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		[HttpPost]
+		public async Task<IActionResult> DeleteUser(string id)
+		{
+			var user = await _userManager.FindByIdAsync(id);
 
 			if (user == null)
 			{
-				ViewBag.ErrorMessage = $"ID为{model.ID}的用户不存在，请重试";
-				_logger.LogError($"Admin控制器中EditUser方法ID为{model.ID}的用户不存在");
+				ViewBag.ErrorMessage = $"ID为{id}的用户不存在，请重试";
+				_logger.LogError($"Admin控制器中DeleteUser方法ID为{id}的用户不存在");
 
 				return View("~/Views/Error/RouteNotFound.cshtml");
 			}
 
-			user.Email = model.Email;
-			user.UserName = model.UserName;
-			user.City = model.City;
-
-			var res = await _userManager.UpdateAsync(user);
+			var res = await _userManager.DeleteAsync(user);
 
 			if (res.Succeeded)
 			{
 				return RedirectToAction("ListUsers");
 			}
-			else
-			{
-				foreach (var item in res.Errors)
-				{
-					ModelState.AddModelError("", item.Description);
-				}
 
-				return View(model);
+			foreach (var item in res.Errors)
+			{
+				ModelState.AddModelError("", item.Description);
 			}
+
+			return RedirectToAction("ListUsers");
 		}
 		#endregion
 	}
