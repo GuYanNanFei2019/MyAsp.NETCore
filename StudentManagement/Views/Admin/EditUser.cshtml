@@ -1,0 +1,91 @@
+﻿@model EditUserViewModel;
+@{
+    ViewBag.Title = "编辑用户";
+}
+
+<form method="post" asp-action="EditUser" asp-controller="Admin">
+	<div class="text-danger" asp-validation-summary="All"></div>
+	<div class="form-group row">
+		<label asp-for="ID" class="col-sm-2 col-form-label"></label>
+		<div class="col-sm-10">
+			<input asp-for="ID" class="form-control" disabled />
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label asp-for="UserName" class="col-sm-2 col-form-label"></label>
+		<div class="col-sm-10">
+			<input asp-for="UserName" class="form-control" placeholder="请输入用户名" />
+			<span asp-validation-for="UserName" class="text-danger"></span>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label asp-for="Email" class="col-sm-2 col-form-label"></label>
+		<div class="col-sm-10">
+			<input asp-for="Email" class="form-control" placeholder="请输入邮箱" />
+			<span asp-validation-for="Email" class="text-danger"></span>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label asp-for="City" class="col-sm-2 col-form-label"></label>
+		<div class="col-sm-10">
+			<input asp-for="City" class="form-control" placeholder="请输入城市" />
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<div class="col-sm-10">
+			<button type="submit" class="btn btn-outline-success m-1">更新</button>
+			<a asp-controller="Admin" asp-action="ListUsers" class="btn btn-outline-info">返回</a>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-header">
+			<h3>该用户的角色</h3>
+		</div>
+		<div class="card-body">
+			@if (Model.Roles.Any())
+			{
+				foreach (var item in Model.Roles)
+				{
+					<h5 class="card-title">@item</h5>
+				}
+			}
+			else
+			{
+				<h5 class="card-title">该用户暂时不属于任何角色</h5>
+			}
+		</div>
+
+		<div class="card-footer">
+			<a class="btn btn-outline-primary" href="#">管理角色</a>
+		</div>
+	</div>
+
+
+	<div class="card mt-3">
+		<div class="card-header">
+			<h3>该用户的声明</h3>
+		</div>
+		<div class="card-body">
+			@if (Model.Claims.Any())
+			{
+				foreach (var item in Model.Claims)
+				{
+					<h5 class="card-title">@item</h5>
+				}
+			}
+			else
+			{
+				<h5 class="card-title">该用户暂时没有任何声明</h5>
+			}
+		</div>
+
+		<div class="card-footer">
+			<a class="btn btn-outline-primary" href="#">管理声明</a>
+		</div>
+	</div>
+</form>
