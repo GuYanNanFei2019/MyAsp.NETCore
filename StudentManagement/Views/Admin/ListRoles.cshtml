@@ -15,8 +15,20 @@
 				<h5 class="card-title">角色名称：@item.Name</h5>
 			</div>
 			<div class="card-footer">
-				<a class="btn btn-outline-primary" asp-controller="Admin" asp-action="EditRole" asp-route-id="@item.Id">编辑</a>
-				<a class="btn btn-outline-danger">删除</a>
+				<form method="post" asp-controller="Admin" asp-action="DeleteRole" asp-route-id="@item.Id">
+
+					<a class="btn btn-outline-primary" asp-controller="Admin" asp-action="EditRole" asp-route-id="@item.Id">编辑</a>
+
+					<span id="confirmdelete_@item.Id" style="display:none">
+						<span>确定要删除 @item.Name 吗？</span>
+						<button type="submit" class="btn btn-outline-danger">确定</button>
+						<a class="btn btn-outline-info" href="#" onclick="confirmDelete('@item.Id', false)">取消</a>
+					</span>
+
+					<span id="deleteSpan_@item.Id">
+						<a class="btn btn-outline-danger" href="#" onclick="confirmDelete('@item.Id', true)">删除</a>
+					</span>
+				</form>
 			</div>
 		</div>
 	}
