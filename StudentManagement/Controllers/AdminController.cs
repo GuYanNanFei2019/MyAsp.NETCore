@@ -255,6 +255,39 @@ namespace StudentManagement.Controllers
 
 			return RedirectToAction("EditRole", new { id = role.Id });
 		}
+
+		/// <summary>
+		/// 删除角色
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		[HttpPost]
+		public async Task<IActionResult> DeleteRole(string id) 
+		{
+			var role = await _roleManager.FindByIdAsync(id);
+
+			if (role == null)
+			{
+				ViewBag.ErrorMessage = $"ID为{id}的角色不存在，请重试";
+				_logger.LogError($"Admin控制器中DeleteRole方法ID为{id}的角色不存在");
+
+				return View("~/Views/Error/RouteNotFound.cshtml");
+			}
+
+			var res = await _roleManager.DeleteAsync(role);
+
+			if (res.Succeeded)
+			{
+				return RedirectToAction("ListRoles");
+			}
+
+			foreach (var item in res.Errors)
+			{
+				ModelState.AddModelError("", item.Description);
+			}
+
+			return RedirectToAction("ListRoles");
+		}
 		#endregion
 
 		#region 用户管理
