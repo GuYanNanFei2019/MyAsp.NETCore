@@ -22,6 +22,15 @@ namespace StudentManagement_DataBase.EFModel.StudentModel
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
+
+			foreach (var item in modelBuilder.Model.GetEntityTypes().SelectMany
+				(
+				selector: s => s.GetForeignKeys()
+				))
+			{
+				item.DeleteBehavior = DeleteBehavior.Restrict;
+			}
+
 			modelBuilder.Seed();
 		}
 	}
