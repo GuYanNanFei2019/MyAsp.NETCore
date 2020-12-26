@@ -86,6 +86,11 @@ namespace StudentManagement.Controllers
 			return RedirectToAction("Index", "Home");
 		}
 
+		/// <summary>
+		/// 登录
+		/// </summary>
+		/// <param name="ReturnUrl"></param>
+		/// <returns></returns>
 		[HttpGet]
 		public IActionResult Login(string ReturnUrl)
 		{
@@ -97,6 +102,12 @@ namespace StudentManagement.Controllers
 			return View(model);
 		}
 
+		/// <summary>
+		/// 登录
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="ReturnUrl"></param>
+		/// <returns></returns>
 		[HttpPost]
 		public async Task<IActionResult> Login(LoginViewModel model, string ReturnUrl)
 		{
@@ -124,6 +135,10 @@ namespace StudentManagement.Controllers
 			return View(model);
 		}
 
+		/// <summary>
+		/// 拒绝访问
+		/// </summary>
+		/// <returns></returns>
 		[HttpGet]
 		[AllowAnonymous]
 		public IActionResult AccessDenied() 
