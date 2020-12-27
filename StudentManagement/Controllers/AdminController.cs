@@ -420,6 +420,97 @@ namespace StudentManagement.Controllers
 
 			return RedirectToAction("ListUsers");
 		}
+
+		/// <summary>
+		/// 管理用户的角色
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		public async Task<IActionResult> ManagerUserRole(string userId) 
+		{
+			ViewBag.userId = userId;
+
+			var user =await _userManager.FindByIdAsync(userId);
+
+			if (user==null)
+			{
+				ViewBag.ErrorMessage = $"ID为{userId}的用户不存在，请重试";
+				_logger.LogError($"Admin控制器中ManagerUserRole方法ID为{userId}的用户不存在");
+
+				return View("~/Views/Error/RouteNotFound.cshtml");
+			}
+
+
+			var model = new List<RolesInUserViewModel>();
+
+			foreach (var item in _roleManager.Roles)
+			{
+				var rolesInViewModel = new RolesInUserViewModel
+				{
+					RoleId = item.Id,
+					RoleName = item.Name
+				};
+
+				//判断当前用户是否已经在该角色下
+				
+				if (await _userManager.IsInRoleAsync(user, item.Name))
+				{
+					rolesInViewModel.IsSelected = true;
+				}
+				else
+				{
+					rolesInViewModel.IsSelected = false;
+				}
+
+				model.Add(rolesInViewModel);
+			}
+
+			return View(model);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> ManagerUserRole(List<RolesInUserViewModel> viewModel,string userId) 
+		{
+			var user = await _userManager.FindByIdAsync(userId);
+
+			if (user == null)
+			{
+				ViewBag.ErrorMessage = $"ID为{userId}的用户不存在，请重试";
+				_logger.LogError($"Admin控制器中ManagerUserRole方法ID为{userId}的用户不存在");
+
+				return View("~/Views/Error/RouteNotFound.cshtml");
+			}
+
+			var roles = await _userManager.GetRolesAsync(user);
+
+			//移除当前用户的所有角色
+			//var res = await _userManager.RemoveFromRolesAsync(user, roles);
+
+			//if (!res.Succeeded)
+			//{
+			//	foreach (var item in res.Errors)
+			//	{
+			//		ModelState.AddModelError("", item.Description);
+			//	}
+
+			//	return View(viewModel); 
+			//}
+
+			//查询出模型列表中被选中的角色添加到用户
+			var res = await _userManager.AddToRolesAsync(user: user, roles: viewModel.Where(x => x.IsSelected).Select(y=>y.RoleName));
+			if (!res.Succeeded)
+			{
+				foreach (var item in res.Errors)
+				{
+					ModelState.AddModelError("", item.Description);
+				}
+
+				return View(viewModel);
+			}
+
+			return RedirectToAction("EditUser",new { id=userId});
+		}
 		#endregion
 	}
 }
