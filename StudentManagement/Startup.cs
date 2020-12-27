@@ -68,12 +68,12 @@ namespace StudentManagement
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
-			}
-			else
+			}else if (env.IsStaging() || env.IsProduction()) 
 			{
 				app.UseExceptionHandler("/Error");
 				app.UseStatusCodePagesWithReExecute(pathFormat: "/Error/{0}");
 			}
+			
 
 			app.UseStaticFiles();
 

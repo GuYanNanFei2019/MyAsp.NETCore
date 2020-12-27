@@ -10,8 +10,21 @@
 
 <hr />
 
-<div class="text-danger text-center">
-	<details>
-		<p>错误消息为：@ViewBag.Message</p>
-	</details>
-</div>
+@if (ViewBag.ErrorTitle == null)
+{
+	<div class="text-danger text-center">
+		<details>
+			<p>错误消息为：@ViewBag.Message</p>
+		</details>
+	</div>
+}
+else
+{
+	<div class="text-center text-danger">
+		<h3>@ViewBag.ErrorTitle</h3>
+		<details>
+			<p>@ViewBag.ErrorMessage</p>
+		</details>
+	</div>
+}
+

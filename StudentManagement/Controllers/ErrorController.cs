@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Controllers
 {
+	[AllowAnonymous]
 	public class ErrorController : Controller
 	{
 		private readonly ILogger _logger;

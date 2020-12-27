@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using StudentManagement.ViewModels.IdentityViewModel;
@@ -262,7 +263,7 @@ namespace StudentManagement.Controllers
 		/// <param name="id"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public async Task<IActionResult> DeleteRole(string id) 
+		public async Task<IActionResult> DeleteRole(string id)
 		{
 			var role = await _roleManager.FindByIdAsync(id);
 
@@ -274,19 +275,30 @@ namespace StudentManagement.Controllers
 				return View("~/Views/Error/RouteNotFound.cshtml");
 			}
 
-			var res = await _roleManager.DeleteAsync(role);
-
-			if (res.Succeeded)
+			try
 			{
+				var res = await _roleManager.DeleteAsync(role);
+
+				if (res.Succeeded)
+				{
+					return RedirectToAction("ListRoles");
+				}
+
+				foreach (var item in res.Errors)
+				{
+					ModelState.AddModelError("", item.Description);
+				}
+
 				return RedirectToAction("ListRoles");
 			}
-
-			foreach (var item in res.Errors)
+			catch (DbUpdateException ex)
 			{
-				ModelState.AddModelError("", item.Description);
-			}
+				_logger.LogError($"Admin控制器中的DeleteRole方法发生异常：{ex}");
 
-			return RedirectToAction("ListRoles");
+				ViewBag.ErrorTitle = $"角色{role.Name}正在被使用中，无法删除！";
+				ViewBag.ErrorMessage = $"角色{role.Name}无法删除，因为该角色中拥有用户。如果您想删除该角色，请先删除该角色下的用户。";
+				return View("~/Views/Error/Error.cshtml");
+			}
 		}
 		#endregion
 
