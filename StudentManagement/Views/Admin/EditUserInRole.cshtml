@@ -5,8 +5,8 @@
 	var roleId = ViewBag.roleId;
 }
 
-<form  method="post" asp-controller="Admin" asp-action="EditUserInRole" asp-route-roleId="@roleId">
-	<input  type="hidden" value="@roleId"/>
+<form  method="post" asp-controller="Admin" asp-action="EditUserInRole" >
+	<input  type="hidden" asp-for="@roleId"/>
 	<div class="card">
 		<div class="card-header">
 			<h3>在此角色中添加或删除用户</h3>
