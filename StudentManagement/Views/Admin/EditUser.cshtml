@@ -1,6 +1,6 @@
 ﻿@model EditUserViewModel;
 @{
-    ViewBag.Title = "编辑用户";
+	ViewBag.Title = "编辑用户";
 }
 
 <form method="post" asp-action="EditUser" asp-controller="Admin">
@@ -85,7 +85,7 @@
 		</div>
 
 		<div class="card-footer">
-			<a class="btn btn-outline-primary" href="#">管理声明</a>
+			<a class="btn btn-outline-primary" asp-controller="Admin" asp-action="ManagerUserClaims" asp-route-userId="@Model.ID">管理声明</a>
 		</div>
 	</div>
 </form>
