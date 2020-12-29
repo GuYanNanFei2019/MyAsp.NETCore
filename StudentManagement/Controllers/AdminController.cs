@@ -7,10 +7,12 @@ using Microsoft.Extensions.Logging;
 using StudentManagement.ViewModels.IdentityViewModel;
 
 using StudentManagement_DataBase.EFModel.IdentityModel;
+using StudentManagement_DataBase.ModelExtensions;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace StudentManagement.Controllers
@@ -422,7 +424,7 @@ namespace StudentManagement.Controllers
 		}
 
 		/// <summary>
-		/// 管理用户的角色
+		/// 管理用户的角色(视图)
 		/// </summary>
 		/// <param name="userId"></param>
 		/// <returns></returns>
@@ -469,6 +471,11 @@ namespace StudentManagement.Controllers
 			return View(model);
 		}
 
+		/// <summary>
+		/// 管理用户的角色
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <returns></returns>
 		[HttpPost]
 		public async Task<IActionResult> ManagerUserRole(List<RolesInUserViewModel> viewModel,string userId) 
 		{
@@ -485,20 +492,20 @@ namespace StudentManagement.Controllers
 			var roles = await _userManager.GetRolesAsync(user);
 
 			//移除当前用户的所有角色
-			//var res = await _userManager.RemoveFromRolesAsync(user, roles);
+			var res = await _userManager.RemoveFromRolesAsync(user, roles);
 
-			//if (!res.Succeeded)
-			//{
-			//	foreach (var item in res.Errors)
-			//	{
-			//		ModelState.AddModelError("", item.Description);
-			//	}
+			if (!res.Succeeded)
+			{
+				foreach (var item in res.Errors)
+				{
+					ModelState.AddModelError("", item.Description);
+				}
 
-			//	return View(viewModel); 
-			//}
+				return View(viewModel);
+			}
 
 			//查询出模型列表中被选中的角色添加到用户
-			var res = await _userManager.AddToRolesAsync(user: user, roles: viewModel.Where(x => x.IsSelected).Select(y=>y.RoleName));
+			res = await _userManager.AddToRolesAsync(user: user, roles: viewModel.Where(x => x.IsSelected).Select(y=>y.RoleName));
 			if (!res.Succeeded)
 			{
 				foreach (var item in res.Errors)
@@ -510,6 +517,91 @@ namespace StudentManagement.Controllers
 			}
 
 			return RedirectToAction("EditUser",new { id=userId});
+		}
+
+		/// <summary>
+		/// 管理用户声明(视图)
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		public async Task<IActionResult> ManagerUserClaims(string userId) 
+		{
+			ViewBag.userId = userId;
+
+			var user = await _userManager.FindByIdAsync(userId);
+
+			if (user == null)
+			{
+				ViewBag.ErrorMessage = $"ID为{userId}的用户不存在，请重试";
+				_logger.LogError($"Admin控制器中ManagerUserClaims方法ID为{userId}的用户不存在");
+
+				return View("~/Views/Error/RouteNotFound.cshtml");
+			}
+
+			//查找当前用户是否有声明
+			var existingClaim = await _userManager.GetClaimsAsync(user);
+
+			var model = new UserClaimViewModel
+			{
+				UserId = userId
+			};
+
+			//循环程序的所有声明
+			foreach (var item in ClaimsStore.AllClaim)
+			{
+				UserClaim userClaim = new UserClaim
+				{
+					ClaimType = item.Type
+				};
+				if (existingClaim.Any(c => c.Type == item.Type))
+				{
+					userClaim.IsSelected = true;
+				}
+				model.UserClaims.Add(userClaim);
+			}
+
+			return View(model);
+		}
+
+		/// <summary>
+		/// 管理用户声明
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="userId"></param>
+		/// <returns></returns>
+		[HttpPost]
+		public async Task<IActionResult> ManagerUserClaims(UserClaimViewModel model,string userId)
+		{
+			var user = await _userManager.FindByIdAsync(userId);
+
+			if (user == null)
+			{
+				ViewBag.ErrorMessage = $"ID为{userId}的用户不存在，请重试";
+				_logger.LogError($"Admin控制器中ManagerUserClaims方法ID为{userId}的用户不存在");
+
+				return View("~/Views/Error/RouteNotFound.cshtml");
+			}
+
+			//查找用户现有的声明并清空
+			var claims =await _userManager.GetClaimsAsync(user);
+			var res = await _userManager.RemoveClaimsAsync(user, claims);
+
+			if (!res.Succeeded)
+			{
+				foreach (var item in res.Errors)
+				{
+					ModelState.AddModelError("", item.Description);
+				}
+
+				return View(model);
+			}
+
+			//添加选中的声明到用户中
+			res = await _userManager.AddClaimsAsync(user, model.UserClaims.Where(x => x.IsSelected)
+																 .Select(y => new Claim(y.ClaimType, y.ClaimType)));
+
+			return RedirectToAction("EditUser", new { id =model.UserId});
 		}
 		#endregion
 	}
