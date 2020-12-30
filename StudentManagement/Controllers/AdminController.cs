@@ -3,12 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-
 using StudentManagement.ViewModels.IdentityViewModel;
-
 using StudentManagement_DataBase.EFModel.IdentityModel;
 using StudentManagement_DataBase.ModelExtensions;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +37,7 @@ namespace StudentManagement.Controllers
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet]
+		[Authorize(policy: "CreateRolePolicy")]
 		public IActionResult CreateRole()
 		{
 			return View();
@@ -51,6 +49,7 @@ namespace StudentManagement.Controllers
 		/// <param name="viewModel"></param>
 		/// <returns></returns>
 		[HttpPost]
+		[Authorize(policy: "CreateRolePolicy")]
 		public async Task<IActionResult> CreateRole(CreateRoleViewModel viewModel)
 		{
 			if (ModelState.IsValid)
@@ -92,6 +91,7 @@ namespace StudentManagement.Controllers
 		/// <param name="id"></param>
 		/// <returns></returns>
 		[HttpGet]
+		[Authorize(policy: "EditRolePolicy")]
 		public async Task<IActionResult> EditRole(string id)
 		{
 			var role = await _roleManager.FindByIdAsync(id);
@@ -128,6 +128,7 @@ namespace StudentManagement.Controllers
 		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPost]
+		[Authorize(policy: "EditRolePolicy")]
 		public async Task<IActionResult> EditRole(EditRoleViewModel model)
 		{
 			var role = await _roleManager.FindByIdAsync(model.Id);
@@ -264,6 +265,7 @@ namespace StudentManagement.Controllers
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
+		[Authorize(policy: "DeleteRolePolicy")]
 		[HttpPost]
 		public async Task<IActionResult> DeleteRole(string id)
 		{
@@ -322,6 +324,7 @@ namespace StudentManagement.Controllers
 		/// <param name="id"></param>
 		/// <returns></returns>
 		[HttpGet]
+		[Authorize(policy: "AdminPolicy")]
 		public async Task<IActionResult> EditUser(string id)
 		{
 			var user = await _userManager.FindByIdAsync(id);
@@ -356,6 +359,7 @@ namespace StudentManagement.Controllers
 		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPost]
+		[Authorize(policy: "AdminPolicy")]
 		public async Task<IActionResult> EditUser(EditUserViewModel model)
 		{
 			if (ModelState.IsValid)
@@ -396,6 +400,7 @@ namespace StudentManagement.Controllers
 		/// <param name="id"></param>
 		/// <returns></returns>
 		[HttpPost]
+		[Authorize(policy: "AdminPolicy")]
 		public async Task<IActionResult> DeleteUser(string id)
 		{
 			var user = await _userManager.FindByIdAsync(id);
@@ -429,6 +434,7 @@ namespace StudentManagement.Controllers
 		/// <param name="userId"></param>
 		/// <returns></returns>
 		[HttpGet]
+		[Authorize(policy: "AdminPolicy")]
 		public async Task<IActionResult> ManagerUserRole(string userId) 
 		{
 			ViewBag.userId = userId;
@@ -525,6 +531,7 @@ namespace StudentManagement.Controllers
 		/// <param name="userId"></param>
 		/// <returns></returns>
 		[HttpGet]
+		[Authorize(policy: "AdminPolicy")]
 		public async Task<IActionResult> ManagerUserClaims(string userId) 
 		{
 			ViewBag.userId = userId;
