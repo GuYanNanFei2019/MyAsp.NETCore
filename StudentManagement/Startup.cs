@@ -60,6 +60,24 @@ namespace StudentManagement
 				options.Password.RequireUppercase = true;
 				options.Password.RequireNonAlphanumeric = false;
 			});
+
+			services.AddAuthorization(options => {
+				options.AddPolicy(
+					name: "DeleteRolePolicy",
+					configurePolicy: policy => policy.RequireClaim(claimType: "Delete Role"));
+
+				options.AddPolicy(
+					name: "CreateRolePolicy",
+					configurePolicy: policy => policy.RequireClaim(claimType: "Create Role"));
+
+				options.AddPolicy(
+					name: "EditRolePolicy",
+					configurePolicy: policy => policy.RequireClaim(claimType: "Edit Role"));
+
+				options.AddPolicy(
+					name: "AdminPolicy",
+					configurePolicy: policy => policy.RequireRole(roles: "Admin"));
+			});
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
