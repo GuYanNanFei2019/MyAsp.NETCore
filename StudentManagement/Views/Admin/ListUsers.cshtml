@@ -18,17 +18,24 @@
 			<div class="card-footer">
 				<form method="post" asp-controller="Admin" asp-action="DeleteUser" asp-route-id="@item.Id">
 
-					<a asp-action="EditUser" asp-controller="Admin" asp-route-id="@item.Id" class="btn btn-outline-warning">编辑</a>
+					@using Microsoft.AspNetCore.Authorization;
 
-					<span id="confirmdelete_@item.Id" style="display:none">
-						<span>确定要删除 @item.UserName 吗？</span>
-						<button type="submit" class="btn btn-outline-danger">确定</button>
-						<a class="btn btn-outline-info" href="#" onclick="confirmDelete('@item.Id', false)">取消</a>
-					</span>
+					@inject IAuthorizationService authorService;
 
-					<span id="deleteSpan_@item.Id">
-						<a class="btn btn-outline-danger" href="#" onclick="confirmDelete('@item.Id', true)">删除</a>
-					</span>
+					@if ((await authorService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
+					{
+						<a asp-action="EditUser" asp-controller="Admin" asp-route-id="@item.Id" class="btn btn-outline-warning">编辑</a>
+
+						<span id="confirmdelete_@item.Id" style="display:none">
+							<span>确定要删除 @item.UserName 吗？</span>
+							<button type="submit" class="btn btn-outline-danger">确定</button>
+							<a class="btn btn-outline-info" href="#" onclick="confirmDelete('@item.Id', false)">取消</a>
+						</span>
+
+						<span id="deleteSpan_@item.Id">
+							<a class="btn btn-outline-danger" href="#" onclick="confirmDelete('@item.Id', true)">删除</a>
+						</span>
+					}
 				</form>
 			</div>
 		</div>
