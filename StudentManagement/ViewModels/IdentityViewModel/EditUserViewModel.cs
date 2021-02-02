@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace StudentManagement.ViewModels.IdentityViewModel
 {
@@ -12,7 +13,7 @@ namespace StudentManagement.ViewModels.IdentityViewModel
 	{
 		public EditUserViewModel()
 		{
-			Claims = new List<string>();
+			Claims = new List<Claim>();
 			Roles = new List<string>();
 		}
 
@@ -35,7 +36,7 @@ namespace StudentManagement.ViewModels.IdentityViewModel
 		public IList<string> Roles { get; set; }
 
 		[Display(Name ="声明")]
-		public List<string> Claims { get; set; }
+		public IList<Claim> Claims { get; set; }
 
 		[Display(Name ="城市")]
 		public string City { get; set; }

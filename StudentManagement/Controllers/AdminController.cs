@@ -347,7 +347,7 @@ namespace StudentManagement.Controllers
 				Email = user.Email,
 				UserName = user.UserName,
 				City = user.City,
-				Claims = userClaims.Select(c => c.Value).ToList(),
+				Claims = userClaims,
 				Roles = userRoles
 			};
 			return View(model);
@@ -434,7 +434,8 @@ namespace StudentManagement.Controllers
 		/// <param name="userId"></param>
 		/// <returns></returns>
 		[HttpGet]
-		[Authorize(policy: "AdminPolicy")]
+		//[Authorize(policy: "AdminPolicy")]
+		[Authorize(Policy = "EditRolePolicy")]
 		public async Task<IActionResult> ManagerUserRole(string userId) 
 		{
 			ViewBag.userId = userId;
@@ -606,7 +607,7 @@ namespace StudentManagement.Controllers
 
 			//添加选中的声明到用户中
 			res = await _userManager.AddClaimsAsync(user, model.UserClaims.Where(x => x.IsSelected)
-																 .Select(y => new Claim(y.ClaimType, y.ClaimType)));
+																 .Select(y => new Claim(y.ClaimType, y.IsSelected ? "true" : "false")));
 
 			return RedirectToAction("EditUser", new { id =model.UserId});
 		}

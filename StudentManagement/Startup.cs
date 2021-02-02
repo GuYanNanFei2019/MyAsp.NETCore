@@ -17,6 +17,7 @@ using StudentManagement_DataBase.EFModel.StudentModel;
 using StudentManagement_DataBase.ModelExtensions;
 using StudentManagement_Repository.Student;
 using StudentManagement_Tools.MiddleWare;
+using StudentManagement_Tools.Security;
 
 namespace StudentManagement
 {
@@ -48,6 +49,8 @@ namespace StudentManagement
 
 			services.AddScoped<IStudentRepository, SqlServerStudentRepository>();
 
+			services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler> ();
+
 			services.AddDbContextPool<StudentDbContext>(options => options.UseSqlServer(connectionString: _configuration.GetConnectionString("StudentConnection")));
 
 			services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -62,10 +65,13 @@ namespace StudentManagement
 				options.Password.RequireNonAlphanumeric = false;
 			});
 
+			services.AddHttpContextAccessor(); ;
+
 			services.AddAuthorization(options => {
 				options.AddPolicy(
 					name: "DeleteRolePolicy",
-					configurePolicy: policy => policy.RequireClaim(claimType: "Delete Role"));
+					configurePolicy: policy => policy.RequireClaim(claimType: "Delete Role")
+					);
 
 				options.AddPolicy(
 					name: "CreateRolePolicy",
@@ -73,7 +79,9 @@ namespace StudentManagement
 
 				options.AddPolicy(
 					name: "EditRolePolicy",
-					configurePolicy: policy => policy.RequireClaim(claimType: "Edit Role"));
+					configurePolicy: policy => policy.AddRequirements(new ManageAdminInRolesAndClaimsRequirement()
+					));
+
 
 				options.AddPolicy(
 					name: "AdminPolicy",
