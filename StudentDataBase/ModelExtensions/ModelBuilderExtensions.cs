@@ -10,16 +10,16 @@ namespace StudentManagement_DataBase.ModelExtensions
 	{
 		public static void Seed(this ModelBuilder modelBuilder) 
 		{
-			modelBuilder.Entity<Students>().HasData(
-				data: new Students
-				{
-					ID = 1,
-					Name = "朱超",
-					ClassName = ClassNameEnum.FourthGrade,
-					Email = "MoshangPengyou@hotmail.com",
-					PhotoPath=null
-				}
-				);
+			//modelBuilder.Entity<Students>().HasData(
+			//	data: new Students
+			//	{
+			//		ID = 1,
+			//		Name = "朱超",
+			//		ClassName = ClassNameEnum.FourthGrade,
+			//		Email = "MoshangPengyou@hotmail.com",
+			//		PhotoPath=null
+			//	}
+			//	);
 		}
 	}
 }

@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using StudentManagement_DataBase.EFModel.IdentityModel;
 using StudentManagement_DataBase.EFModel.StudentModel;
+using StudentManagement_DataBase.ModelExtensions;
 using StudentManagement_Repository.Student;
 using StudentManagement_Tools.MiddleWare;
 
@@ -100,6 +101,8 @@ namespace StudentManagement
 			app.UseAuthentication();
 
 			app.UseAuthorization();
+
+			app.UseDataInitiaizer();
 
 			app.UseEndpoints(endpoints =>
 			{

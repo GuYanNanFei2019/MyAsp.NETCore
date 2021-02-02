@@ -30,8 +30,6 @@ namespace StudentManagement_DataBase.EFModel.StudentModel
 			{
 				item.DeleteBehavior = DeleteBehavior.Restrict;
 			}
-
-			modelBuilder.Seed();
 		}
 	}
 }
