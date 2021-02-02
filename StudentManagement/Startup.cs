@@ -51,6 +51,8 @@ namespace StudentManagement
 
 			services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler> ();
 
+			services.AddSingleton<IAuthorizationHandler, SuperAdmin_Handler>();
+
 			services.AddDbContextPool<StudentDbContext>(options => options.UseSqlServer(connectionString: _configuration.GetConnectionString("StudentConnection")));
 
 			services.AddIdentity<ApplicationUser, IdentityRole>()
